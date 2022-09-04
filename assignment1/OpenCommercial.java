@@ -2,7 +2,6 @@
 
 import java.io.*;
 import java.net.*;
-import java.util.Arrays; 
 /**  A class that provides a main function to read five lines of a commercial
  *   Web page and print them in reverse order, given the name of a company.
  */
@@ -26,44 +25,35 @@ class OpenCommercial {
     System.out.print("Please enter the name of a company (without spaces): ");
     System.out.flush();        /* Make sure the line is printed immediately. */
     inputLine = keyboard.readLine();
-    // String url = "http://www." + inputLine + ".com/";
-    String url = "https://www.runoob.com/java/string-removing-char.html";
+    String url = "https://www." + inputLine + ".com/";
     /* Replace this comment with your solution.  */
-    String[] ctx = getUrlContents(url, 5);
-    System.out.println(reverse(ctx));
-    // inputLine = Arrays.toString(reverse(ctx));
+    String[] ctx = reverse(getUrlContents(url, 5));
+    for (int j = 0; j < ctx.length; j++) {
+      System.out.println(ctx[j]);
+    }
   }
 
-  public static String reverse(String[] array) {
-    // System.out.println("Array = " + Arrays.toString(array));
-    int maxIndex = array.length - 1;
-    int halfLength = array.length / 2;
-    for (int i = 0; i < halfLength; i++) {
-        String temp = array[i];
-        array[i] = array[maxIndex - i];
-        array[maxIndex - i] = temp;
-    }
-    return Arrays.toString(array);
-}
-
+  /**
+   * 
+   * @param theUrl
+   * @param count
+   * @return [count] lines of files
+   */
   public static String[] getUrlContents(String theUrl, int count)  
   {  
     // StringBuilder content = new StringBuilder(); 
     String[] arr = new String[5]; 
-  // Use try and catch to avoid the exceptions  
+    // Use try and catch to avoid the exceptions  
     try  
     {  
       URL url = new URL(theUrl); // creating a url object  
-      URLConnection urlConnection = url.openConnection(); // creating a urlconnection object  
-  
       // wrapping the urlconnection in a bufferedreader  
-      BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));  
+      BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(url.openStream()));  
       String line;
       int i = 0;
       // reading from the urlconnection using the bufferedreader  
-      while ((line = bufferedReader.readLine()) != null && i < count)  
+      while (i < count && (line = bufferedReader.readLine()) != null)  
       {
-        System.out.println(i + ":" + line);
         arr[i] = line;
         i++;
       }  
@@ -74,6 +64,23 @@ class OpenCommercial {
       e.printStackTrace();  
     }  
     return arr;  
-  }  
+  }
+
+  /**
+   * reverse array
+   * @param array
+   * @return reversed array
+   */
+  public static String[] reverse(String[] array) {
+    // System.out.println("Array = " + Arrays.toString(array));
+    int maxIndex = array.length - 1;
+    int halfLength = array.length / 2;
+    for (int i = 0; i < halfLength; i++) {
+        String temp = array[i];
+        array[i] = array[maxIndex - i];
+        array[maxIndex - i] = temp;
+    }
+    return array;
+  }
 }
 
