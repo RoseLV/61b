@@ -8,7 +8,9 @@ import list.*;
  **/
 public class Set {
   /* Fill in the data fields here. */
-
+  // protected int size;
+  // protected DListNode head;
+  List elements;
   /**
    * Set ADT invariants:
    *  1)  The Set's elements must be precisely the elements of the List.
@@ -16,7 +18,10 @@ public class Set {
    *      must always be sorted in ascending order.
    *  3)  No two elements in the List may be equal according to compareTo().
    **/
-
+  // protected DListNode newNode(Object item, DList list,
+  //                             DListNode prev, DListNode next) {
+  //   return new DListNode(item, list, prev, next);
+  // }
   /**
    *  Constructs an empty Set. 
    *
@@ -24,6 +29,11 @@ public class Set {
    **/
   public Set() { 
     // Your solution here.
+    // size = 0;
+    // head = newNode(null, null, null, null);
+    // head.next = head;
+    // head.prev = head;
+    elements = new DList();
   }
 
   /**
@@ -32,8 +42,8 @@ public class Set {
    *  Performance:  runs in O(1) time.
    **/
   public int cardinality() {
-    // Replace the following line with your solution.
-    return 0;
+    // return size;
+    return elements.length();
   }
 
   /**
@@ -45,7 +55,31 @@ public class Set {
    *  Performance:  runs in O(this.cardinality()) time.
    **/
   public void insert(Comparable c) {
-    // Your solution here.
+    if (elements.isEmpty()) {
+      elements.insertFront(c);
+      return;
+    }
+    try {
+      DListNode copy = (DListNode)elements.front();
+      // 1. 循环list，break条件是循环完一圈
+      while (copy.isValidNode()) {
+        int res = c.compareTo(copy.item());
+        // 2. 等于，去重
+        if (res == 0) {
+          return;
+        }
+        // 3. 小于插入前面
+        if (res < 0) {
+          copy.insertBefore(c);
+          return;
+        }
+        // 4. 大于指针往后面移动，继续循环
+        copy = (DListNode)copy.next();
+      }
+      elements.insertBack(c);
+    } catch (InvalidNodeException e) {
+      System.err.println(e);
+    }
   }
 
   /**
@@ -64,7 +98,34 @@ public class Set {
    *  DO NOT ATTEMPT TO COPY ELEMENTS; just copy _references_ to them.
    **/
   public void union(Set s) {
-    // Your solution here.
+    try {
+      ListNode copy = elements.front();
+      ListNode copy2 = s.elements.front();
+
+      while (copy.isValidNode() && copy2.isValidNode()) {
+        int res = ((Comparable)copy.item()).compareTo(copy2.item());
+        if (res==0) {
+          copy = copy.next();
+          copy2 = copy2.next();
+        }
+        else if (res<0) {
+          copy = copy.next();
+        }
+        else if (res>0) {
+          copy.insertBefore(copy2.item());
+          // copy = copy.next();
+          copy2 = copy2.next();
+        }
+      }
+
+      while (copy2.isValidNode()) {
+        elements.insertBack(copy2.item());
+        copy2 = copy2.next();
+      }
+    } catch (InvalidNodeException e) {
+      System.err.println(e);
+    }
+
   }
 
   /**
@@ -76,12 +137,38 @@ public class Set {
    *  Do not construct any new ListNodes during the execution of intersect.
    *  Reuse the nodes of "this" that will be in the intersection.
    *
-   *  DO NOT MODIFY THE SET s.
-   *  DO NOT CONSTRUCT ANY NEW NODES.
-   *  DO NOT ATTEMPT TO COPY ELEMENTS.
+   *  DO NOT MODIFY THE SET s. ==> ONLY modify elements
+   *  DO NOT CONSTRUCT ANY NEW NODES. ==> 
+   *  DO NOT ATTEMPT TO COPY ELEMENTS. ==> as return void 
    **/
   public void intersect(Set s) {
-    // Your solution here.
+    try {
+      ListNode copy = elements.front();
+      ListNode copy2 = s.elements.front();
+
+      while (copy.isValidNode() && copy2.isValidNode()) {
+        int res = ((Comparable)copy.item()).compareTo(copy2.item());
+        if (res==0) {
+          copy = copy.next();
+          copy2 = copy2.next();
+        }
+        else if (res < 0) {
+          copy = copy.next();
+          copy.prev().remove();
+        }
+        else if (res>0) {
+          copy2 = copy2.next();
+        }
+      }
+      while (copy.isValidNode()) {
+        ListNode temp = copy;
+        copy = temp.next();
+        temp.remove();
+      }
+    } catch (InvalidNodeException e) {
+      System.err.println(e);
+    }
+
   }
 
   /**
@@ -100,8 +187,18 @@ public class Set {
    *            DEVIATIONS WILL LOSE POINTS.
    **/
   public String toString() {
-    // Replace the following line with your solution.
-    return "";
+    String res = "{";
+    ListNode node = elements.front();
+    while (node.isValidNode()) {
+        try {
+            res += node.item();
+            res += ",";
+            node = node.next();
+        } catch(InvalidNodeException e) {
+            System.err.println(e);
+        }
+    }
+    return res + "}";
   }
 
   public static void main(String[] argv) {
@@ -109,6 +206,11 @@ public class Set {
     s.insert(new Integer(3));
     s.insert(new Integer(4));
     s.insert(new Integer(3));
+    s.insert(new Integer(1));
+    s.insert(new Integer(99));
+    s.insert(new Integer(6));
+    s.insert(new Integer(100));
+
     System.out.println("Set s = " + s);
 
     Set s2 = new Set();
@@ -121,13 +223,18 @@ public class Set {
     s3.insert(new Integer(5));
     s3.insert(new Integer(3));
     s3.insert(new Integer(8));
+    s3.insert(new Integer(7));
     System.out.println("Set s3 = " + s3);
 
-    s.union(s2);
-    System.out.println("After s.union(s2), s = " + s);
+    // s.union(s2);
+    // System.out.println("After s.union(s2), s = " + s);
+    // s.union(s3);
+    // System.out.println("After s.union(s3), s = " + s);
 
-    s.intersect(s3);
-    System.out.println("After s.intersect(s3), s = " + s);
+    s2.intersect(s3);
+    System.out.println("After s.intersect(s3), s = " + s2);
+    // s.intersect(s3);
+    // System.out.println("After s.intersect(s3), s = " + s);
 
     System.out.println("s.cardinality() = " + s.cardinality());
     // You may want to add more (ungraded) test code here.

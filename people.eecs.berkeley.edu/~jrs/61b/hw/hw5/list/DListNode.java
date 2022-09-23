@@ -95,9 +95,14 @@ public class DListNode extends ListNode {
     }
     // Your solution here.  Will look something like your Homework 4 solution,
     //   but changes are necessary.  For instance, there is no need to check if
-    //   "this" is null.  Remember that this node's "myList" field tells you
-    //   what DList it's in.  You should use myList.newNode() to create the
-    //   new node.
+    //   "this" is null.  
+    // Remember that this node's "myList" field tells you what DList it's in.  
+    // You should use myList.newNode() to create the new node.
+
+    DListNode newnode = ((DList)myList).newNode(item, (DList)myList, this, next);
+    next.prev = newnode;
+    next = newnode;
+    myList.size++;
   }
 
   /**
@@ -118,6 +123,11 @@ public class DListNode extends ListNode {
     //   "this" is null.  Remember that this node's "myList" field tells you
     //   what DList it's in.  You should use myList.newNode() to create the
     //   new node.
+    DListNode newnode = ((DList)myList).newNode(item, (DList)myList, prev, this);
+    prev.next = newnode;
+    // next.prev = newnode; // WRONG
+    this.prev = newnode;
+    myList.size++;
   }
 
   /**
@@ -136,8 +146,9 @@ public class DListNode extends ListNode {
     //   but changes are necessary.  For instance, there is no need to check if
     //   "this" is null.  Remember that this node's "myList" field tells you
     //   what DList it's in.
-
-
+    prev.next = next;
+    next.prev = prev;
+    myList.size--;
 
     // Make this node an invalid node, so it cannot be used to corrupt myList.
     myList = null;

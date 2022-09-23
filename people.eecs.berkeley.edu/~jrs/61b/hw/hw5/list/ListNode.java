@@ -19,7 +19,7 @@ public abstract class ListNode {
 
   protected Object item;
   protected List myList;
-
+  
   /**
    *  isValidNode returns true if this node is valid; false otherwise.
    *  By default, an invalid node is one that doesn't belong to a list (myList
