@@ -33,7 +33,7 @@ class ListNode {
   /**
    *  ptrTo() returns a reference to the node at the given position.  If
    *  position < 1 or position > the number of nodes in the list, returns
-   *  null.  Assumes the list is acyclic.
+   *  null.  Assumes the list is acyclic无环. 
    *  @return a reference to the node at position "position".
    */
   public ListNode ptrTo(int position) {
